@@ -62,11 +62,7 @@ exports.getVideo=async(req,res,next)=>{
     try{
         const video = await Video.findById(req.params.id)
         if(!video) return next(createError(404,"Video not found"))
-        res.status(200).json({
-            status:"success",
-            msg:"Video found successfully",
-            video
-        })
+        res.status(200).json(video)
     }catch(err){
         next(err)
     }
@@ -89,10 +85,7 @@ exports.addView=async(req,res,next)=>{
 exports.getTrend=async(req,res,next)=>{
     try{
         const videos = await Video.find().sort({views:-1})
-        res.status(200).json({
-            status:"success",
-            videos
-        })
+        res.status(200).json(videos)
     }catch(err){
         next(err)
     }
@@ -101,10 +94,7 @@ exports.getTrend=async(req,res,next)=>{
 exports.getRandom=async(req,res,next)=>{
     try{
         const videos = await Video.aggregate([{$sample:{size:40}}])
-        res.status(200).json({
-            status:"success",
-            videos
-        })
+        res.status(200).json(videos)
     }catch(err){
         next(err)
     }
@@ -120,10 +110,7 @@ exports.getSubscribe=async(req,res,next)=>{
                 return Video.find({userId:channelId})
             })
         )
-        res.status(200).json({
-            status:"success",
-            videos:videos.flat().sort((a,b)=>b.createdAt - a.createdAt)
-        })
+        res.status(200).json(videos.flat().sort((a,b)=>b.createdAt - a.createdAt))
     }catch(err){
         next(err)
     }
@@ -133,10 +120,7 @@ exports.getTag=async(req,res,next)=>{
     try{
         const tags = req.query.tags.split(",")
         const videos = await Video.find({tags:{$in:tags}}).limit(20)
-        res.status(200).json({
-            status:"success",
-            videos
-        })
+        res.status(200).json(videos)
         console.log(tags)
     }catch(err){
         next(err)
@@ -147,10 +131,7 @@ exports.getSearch=async(req,res,next)=>{
     const query = req.query.q
     try{
         const videos = await Video.find({title:{$regex: query, $options: "i"}}).limit(40)
-        res.status(200).json({
-            status:"success",
-            videos
-        })
+        res.status(200).json(videos)
     }catch(err){
         next(err)
     }
